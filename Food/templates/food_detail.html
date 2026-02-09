@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}{{ food_item.name }} - Food Delivery{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header">
+        <h1>{{ food_item.name }}</h1>
+    </div>
+
+    <div style="max-width: 800px; margin: 40px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <img src="{{ food_item.image.url }}" alt="{{ food_item.name }}" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 10px; margin-bottom: 20px;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>{{ food_item.name }}</h2>
+            <p style="font-size: 2em; color: #667eea; font-weight: bold;">${{ food_item.price }}</p>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <span style="background: #f0f0f0; padding: 8px 15px; border-radius: 20px; color: #667eea; font-weight: bold;">
+                {{ food_item.category.name }}
+            </span>
+        </div>
+        
+        <div style="margin-bottom: 30px; line-height: 1.6;">
+            <h3 style="margin-bottom: 10px;">Description</h3>
+            <p>{{ food_item.description }}</p>
+        </div>
+        
+        <div style="display: flex; gap: 15px;">
+            <button onclick="addToCart('{{ food_item.id }}', '{{ food_item.name }}', '{{ food_item.price }}')" style="flex: 1; padding: 15px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer;">
+                Add to Cart
+            </button>
+            <a href="{% url 'food:index' %}" style="flex: 1; padding: 15px 30px; background: #f0f0f0; color: #333; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; text-align: center; text-decoration: none;">
+                Back to Menu
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    let cart = JSON.parse(localStorage.getItem('foodCart') || '[]');
+
+    function addToCart(id, name, price) {
+        cart.push({id, name, price});
+        localStorage.setItem('foodCart', JSON.stringify(cart));
+        alert(name + " added to cart!");
+    }
+</script>
+{% endblock %}

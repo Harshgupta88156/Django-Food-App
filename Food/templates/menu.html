@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="header">
+    <h1>Delicious Delivery</h1>
+    <div id="cart-status">Items in Cart: <span id="cart-count">0</span></div>
+</div>
+
+<input type="text" id="search" placeholder="Search food..." onkeyup="searchFood()">
+
+<div class="menu-container">
+    {% for item in items %}
+    <div class="card" data-name="{{ item.name|lower }}">
+        <img src="{{ item.image.url }}" alt="{{ item.name }}" width="100%">
+        <h3>{{ item.name }}</h3>
+        <p>${{ item.price }}</p>
+        <button onclick="addToCart('{{ item.id }}', '{{ item.name }}', '{{ item.price }}')">
+            Add to Cart
+        </button>
+    </div>
+    {% empty %}
+    <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+        <p style="font-size: 1.2em; color: #999;">No food items available.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<form action="{% url 'food:checkout' %}" method="GET" id="checkout-form" style="display: none;">
+    <button type="submit" class="checkout-btn" id="checkout-button">Go to Checkout</button>
+</form>
+
+<script>
+    // Load cart from localStorage
+    let cart = JSON.parse(localStorage.getItem('foodCart') || '[]');
+    updateCartCount();
+
+    function addToCart(id, name, price) {
+        cart.push({id, name, price});
+        localStorage.setItem('foodCart', JSON.stringify(cart));
+        updateCartCount();
+        alert(name + " added to cart!");
+    }
+
+    function updateCartCount() {
+        const count = cart.length;
+        document.getElementById('cart-count').innerText = count;
+        
+        // Show/hide checkout button
+        const checkoutForm = document.getElementById('checkout-form');
+        if (count > 0) {
+            checkoutForm.style.display = 'block';
+        } else {
+            checkoutForm.style.display = 'none';
+        }
+    }
+
+    function searchFood() {
+        let term = document.getElementById('search').value.toLowerCase();
+        document.querySelectorAll('.card').forEach(card => {
+            let name = card.getAttribute('data-name');
+            card.style.display = name.includes(term) ? "block" : "none";
+        });
+    }
+</script>
+{% endblock %}

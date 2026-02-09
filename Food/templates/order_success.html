@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Order Confirmed - Food Delivery{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header">
+        <h1>Order Confirmed!</h1>
+        <p>Thank you for your order</p>
+    </div>
+
+    <div style="max-width: 600px; margin: 40px auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center;">
+        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+            <span style="font-size: 40px; color: white;">✓</span>
+        </div>
+        
+        <h2 style="color: #667eea; margin-bottom: 10px;">Order #{{ order.id }}</h2>
+        <p style="color: #999; margin-bottom: 30px;">{{ order.created_at|date:"F d, Y h:i A" }}</p>
+        
+        <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span>Order Total:</span>
+                <span style="font-weight: bold; font-size: 1.5em; color: #667eea;">${{ order.total_price }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span>Status:</span>
+                <span style="color: {% if order.is_completed %}green{% else %}orange{% endif %}; font-weight: bold;">
+                    {% if order.is_completed %}Completed{% else %}Processing{% endif %}
+                </span>
+            </div>
+        </div>
+        
+        <p style="color: #666; margin-bottom: 30px;">
+            Your order is being prepared. You will receive a notification when it's ready for delivery.
+        </p>
+        
+        <a href="{% url 'food:index' %}" style="display: inline-block; padding: 15px 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: bold;">
+            Order More Food
+        </a>
+    </div>
+</div>
+
+<script>
+    // Clear cart after successful order
+    localStorage.removeItem('foodCart');
+</script>
+{% endblock %}

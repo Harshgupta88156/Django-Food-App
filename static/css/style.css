@@ -1,0 +1,22 @@
+.menu-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+.card {
+    border: 1px solid #eee;
+    padding: 15px;
+    width: 200px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.05);
+}
+.card button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 4px;
+}

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Checkout - Food Delivery{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header">
+        <h1>Checkout</h1>
+        <p>Review your order and complete your purchase</p>
+    </div>
+
+    <div style="max-width: 800px; margin: 40px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <h2 style="margin-bottom: 20px; color: #667eea;">Order Summary</h2>
+        
+        <div id="order-items" style="margin-bottom: 30px;">
+            <p style="text-align: center; color: #999;">Loading your cart...</p>
+        </div>
+
+        <div style="border-top: 2px solid #f0f0f0; padding-top: 20px; margin-top: 20px;">
+            <div style="display: flex; justify-content: space-between; font-size: 1.5em; font-weight: bold; color: #667eea;">
+                <span>Total:</span>
+                <span id="total-price">$0.00</span>
+            </div>
+        </div>
+
+        <form method="POST" action="{% url 'food:checkout' %}" style="margin-top: 30px;">
+            {% csrf_token %}
+            <input type="hidden" name="cart_data" id="cart-data-input">
+            
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <button type="submit" style="flex: 1; min-width: 200px; padding: 15px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s;">
+                    Place Order
+                </button>
+                <a href="{% url 'food:index' %}" style="flex: 1; min-width: 200px; padding: 15px 30px; background: #f0f0f0; color: #333; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; text-align: center; text-decoration: none; transition: all 0.3s; display: inline-block;">
+                    Continue Shopping
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Retrieve cart from localStorage
+    let cart = JSON.parse(localStorage.getItem('foodCart') || '[]');
+    
+    function displayCart() {
+        const orderItemsDiv = document.getElementById('order-items');
+        const totalPriceSpan = document.getElementById('total-price');
+        
+        if (cart.length === 0) {
+            orderItemsDiv.innerHTML = '<p style="text-align: center; color: #999;">Your cart is empty</p>';
+            totalPriceSpan.textContent = '$0.00';
+            return;
+        }
+        
+        let total = 0;
+        let html = '';
+        
+        cart.forEach((item, index) => {
+            const price = parseFloat(item.price);
+            total += price;
+            
+            html += `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #f0f0f0;">
+                    <div>
+                        <h3 style="margin-bottom: 5px;">${item.name}</h3>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <span style="font-size: 1.2em; font-weight: bold; color: #667eea;">$${price.toFixed(2)}</span>
+                        <button onclick="removeItem(${index})" style="padding: 8px 15px; background: #f5576c; color: white; border: none; border-radius: 5px; cursor: pointer;">Remove</button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        orderItemsDiv.innerHTML = html;
+        totalPriceSpan.textContent = `$${total.toFixed(2)}`;
+        
+        // Set cart data in hidden input
+        document.getElementById('cart-data-input').value = JSON.stringify(cart);
+    }
+    
+    function removeItem(index) {
+        cart.splice(index, 1);
+        localStorage.setItem('foodCart', JSON.stringify(cart));
+        displayCart();
+    }
+    
+    // Display cart on page load
+    displayCart();
+</script>
+{% endblock %}
